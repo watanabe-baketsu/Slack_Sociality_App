@@ -41,7 +41,7 @@ app = App(
 
 
 def polite_japanese(text):
-    prompt = f"以下のテキストを丁寧な言い方に変えてください。出力は修正後の文章のみで終了してください。それ以降に会話を作成する必要はありません。" \
+    prompt = f"以下の文章を丁寧な言い方に変えてください。出力は修正後の文章のみにしてください。" \
              f":\n\n{text}\n"
     response = openai.ChatCompletion.create(
         model="gpt-3.5-turbo",
