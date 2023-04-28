@@ -25,7 +25,7 @@ def polite_japanese(text):
     return response.choices[0].text
 
 
-@app.event("app_mention")                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    ...
+@app.event("app_mention")
 def handle_message(body, say):
     user_id = body['event']['user']
     text = body['event']['text']
