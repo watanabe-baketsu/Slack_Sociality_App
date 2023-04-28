@@ -1,0 +1,42 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: >
+  python3.9
+  SAM Template
+
+Resources:
+  # Lambda
+  SlackSocialFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: "Slack-Social-Skill-Development"
+      Handler: app.handler
+      Runtime: python3.9
+      CodeUri: ./src
+      Role: !GetAtt IamRoleLambda.Arn
+      Timeout: 600
+      MemorySize: 128
+      Architectures:
+        - x86_64
+      Events:
+        SlackApiEvent:
+          Type: Api
+          Properties:
+            Path: /slack/events
+            Method: POST
+
+  IamRoleLambda:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+            Action: sts:AssumeRole
+      Path: /
+      ManagedPolicyArns:
+        - "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+        - "arn:aws:iam::aws:policy/SecretsManagerReadWrite"
+      RoleName: !Sub "Slack-App-IamRoleLambda"

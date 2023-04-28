@@ -1,0 +1,9 @@
+version = 0.1
+[default.deploy.parameters]
+stack_name = "slack-social-skill-develop"
+resolve_s3 = true
+s3_prefix = "slack-social-skill-develop"
+region = "ap-northeast-1"
+capabilities = "CAPABILITY_NAMED_IAM"
+image_repositories = []
+disable_rollback = true
