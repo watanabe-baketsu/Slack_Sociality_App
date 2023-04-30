@@ -42,7 +42,10 @@ app = App(
 
 def polite_japanese(text):
     prompt_system = "あなたはとても優秀なassistantです。"
-    prompt_user = f"以下の文章を丁寧な形に修正してください。修正後の文章のみを表示してください。:\n\n「{text}」\n"
+    prompt_user = f"以下の文章が他者を不快にするかどうか判定してください。他者を不快にする可能性がある場合は" \
+                  f"「1」を、不快にする可能性がない場合は「0」を先頭に出力してください。" \
+                  f"「1」を出力する場合のみ、丁寧な形に修正後の文章を、「1:修正後の文章」の形で修正後の文章を表示してください。" \
+                  f"「0」を出力する場合は修正後の文章は必要ありません。:\n\n「{text}」\n"
     response = openai.ChatCompletion.create(
         model="gpt-4",
         messages=[
@@ -54,21 +57,48 @@ def polite_japanese(text):
     return response.choices[0].message.content.strip()
 
 
-@app.event("app_mention")
+def determine_polite(text):
+    prompt_system = "あなたはとても優秀なassistantです。"
+    prompt_user = f"以下の文章が過激な発言であるかどうか判定してください。過激な発言である場合は" \
+                  f"「1」を、過激な発言ではない場合は「0」を出力してください。" \
+                  f"「0」または「1」のみを出力してください。:\n\n「{text}」\n"
+    response = openai.ChatCompletion.create(
+        model="gpt-4",
+        messages=[
+            {"role": "system", "content": prompt_system},
+            {"role": "user", "content": prompt_user}
+        ]
+    )
+
+    return response.choices[0].message.content.strip()
+
+
+@app.event("message")
 def handle_message(body, say):
-    user_id = body['event']['user']
-    text = body['event']['text']
-    thread_ts = body['event']['ts']
+    print(body)
     channel_id = body['event']['channel']
+    if 'subtype' not in body['event']:
+        user_id = body['event']['user']
+        text = body['event']['text']
+        thread_ts = body['event']['ts']
+    elif body['event']['subtype'] == 'message_changed':
+        user_id = body['event']['message']['user']
+        text = body['event']['message']['text']
+        thread_ts = body['event']['message']['ts']
+    else:
+        return
 
     polite_text = polite_japanese(text)
-    polite_text = polite_text.replace("<@U0559M7LES1> ", "")
+    print(polite_text)
+    if "1:" in polite_text:
+        polite_text = polite_text.replace("1:", "")
+        polite_text = polite_text.replace("<@U0559M7LES1> ", "")
 
-    app.client.chat_postMessage(
-        channel=channel_id,
-        text=f"<@{user_id}> さんの発言に社会性を付与しますと以下のようになります。:\n```{polite_text}```",
-        thread_ts=thread_ts
-    )
+        app.client.chat_postMessage(
+            channel=channel_id,
+            text=f"<@{user_id}> さんの発言は他者を不快にする可能性があります。以下のように修正することで円滑なコミュニケーションとなります。:\n```{polite_text}```",
+            thread_ts=thread_ts
+        )
 
 
 def handler(event, context):

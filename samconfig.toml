@@ -6,4 +6,4 @@ s3_prefix = "slack-social-skill-develop"
 region = "ap-northeast-1"
 capabilities = "CAPABILITY_NAMED_IAM"
 image_repositories = []
-disable_rollback = true
+disable_rollback = false
