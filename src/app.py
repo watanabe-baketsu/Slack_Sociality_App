@@ -41,11 +41,14 @@ app = App(
 
 
 def polite_japanese(text):
-    prompt = f"以下の文章を丁寧な言い方に変えてください。出力は修正後の文章のみにしてください。" \
-             f":\n\n{text}\n"
+    prompt_system = "あなたはとても優秀なassistantです。"
+    prompt_user = f"以下の文章を丁寧な形に修正してください。修正後の文章のみを表示してください。:\n\n「{text}」\n"
     response = openai.ChatCompletion.create(
-        model="gpt-3.5-turbo",
-        messages=[{"role": "user", "content": prompt}],
+        model="gpt-4",
+        messages=[
+            {"role": "system", "content": prompt_system},
+            {"role": "user", "content": prompt_user}
+        ]
     )
 
     return response.choices[0].message.content.strip()
