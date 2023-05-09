@@ -42,27 +42,10 @@ app = App(
 
 def polite_japanese(text):
     prompt_system = "あなたはとても優秀なassistantです。"
-    prompt_user = f"以下の文章が他者を不快にするかどうか判定してください。他者を不快にする可能性がある場合は" \
-                  f"「1」を、不快にする可能性がない場合は「0」を先頭に出力してください。" \
+    prompt_user = f"以下の発言が、差別的な内容を含む発言であるかどうか判定してください。" \
+                  f"差別的な内容を含む発言である場合は「1」を、差別的な内容を含まない発言の場合は「0」を先頭に出力してください。" \
                   f"「1」を出力する場合のみ、丁寧な形に修正後の文章を、「1:修正後の文章」の形で修正後の文章を表示してください。" \
                   f"「0」を出力する場合は修正後の文章は必要ありません。:\n\n「{text}」\n"
-    response = openai.ChatCompletion.create(
-        model="gpt-4",
-        messages=[
-            {"role": "system", "content": prompt_system},
-            {"role": "user", "content": prompt_user}
-        ]
-    )
-
-    return response.choices[0].message.content.strip()
-
-
-def determine_polite(text):
-    prompt_system = "あなたはとても優秀なassistantです。"
-    prompt_user = f"以下の発言が、親しい間柄であっても不適切な発言であるかどうか判定してください。" \
-                  f"親しい間柄であっても不適切な発言である場合は" \
-                  f"「1」を、過激な発言ではない場合は「0」を出力してください。" \
-                  f"「0」または「1」のみを出力してください。:\n\n「{text}」\n"
     response = openai.ChatCompletion.create(
         model="gpt-4",
         messages=[
@@ -97,7 +80,7 @@ def handle_message(body, say):
 
         app.client.chat_postMessage(
             channel=channel_id,
-            text=f"<@{user_id}> よ、発言が不適切だ。悔い改めよ。このように言い直すのだ。:\n```{polite_text}```",
+            text=f"<@{user_id}> よ、発言が過激だ。このように言い直すのだ。:\n```{polite_text}```",
             thread_ts=thread_ts
         )
 
