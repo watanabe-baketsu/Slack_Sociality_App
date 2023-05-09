@@ -59,7 +59,8 @@ def polite_japanese(text):
 
 def determine_polite(text):
     prompt_system = "あなたはとても優秀なassistantです。"
-    prompt_user = f"以下の文章が過激な発言であるかどうか判定してください。過激な発言である場合は" \
+    prompt_user = f"以下の発言が、親しい間柄であっても不適切な発言であるかどうか判定してください。" \
+                  f"親しい間柄であっても不適切な発言である場合は" \
                   f"「1」を、過激な発言ではない場合は「0」を出力してください。" \
                   f"「0」または「1」のみを出力してください。:\n\n「{text}」\n"
     response = openai.ChatCompletion.create(
@@ -96,7 +97,7 @@ def handle_message(body, say):
 
         app.client.chat_postMessage(
             channel=channel_id,
-            text=f"<@{user_id}> さんの発言は他者を不快にする可能性があります。以下のように修正することで円滑なコミュニケーションとなります。:\n```{polite_text}```",
+            text=f"<@{user_id}> よ、発言が不適切だ。悔い改めよ。このように言い直すのだ。:\n```{polite_text}```",
             thread_ts=thread_ts
         )
 
