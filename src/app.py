@@ -41,11 +41,14 @@ app = App(
 
 
 def polite_japanese(text):
-    prompt_system = "あなたはとても優秀なassistantです。"
-    prompt_user = f"以下の発言が、差別的な内容を含む発言であるかどうか判定してください。" \
-                  f"差別的な内容を含む発言である場合は「1」を、差別的な内容を含まない発言の場合は「0」を先頭に出力してください。" \
-                  f"「1」を出力する場合のみ、丁寧な形に修正後の文章を、「1:修正後の文章」の形で修正後の文章を表示してください。" \
-                  f"「0」を出力する場合は修正後の文章は必要ありません。:\n\n「{text}」\n"
+    prompt_system = "Please operate as a Japanese speech modification program. " \
+                    "Determine whether the user's speech contains discriminatory content. " \
+                    "If the speech contains discriminatory content, output '1' at the beginning, " \
+                    "and if it does not contain discriminatory content, output '0'. If you output '1', " \
+                    "please display the modified sentence in a polite form as '1: Modified sentence'. " \
+                    "If you output '0', a modified sentence is not necessary." \
+                    "Output the 'Modified sentence' part in Japanese."
+    prompt_user = text
     response = openai.ChatCompletion.create(
         model="gpt-4",
         messages=[
