@@ -60,6 +60,19 @@ def polite_japanese(text):
     return response.choices[0].message.content.strip()
 
 
+def kyotoben_transformer(text):
+    prompt_user = f"以下の発言を皮肉っぽく相手の煽るような京都弁に変換してください。" \
+                  f"ただし、あえて褒めるような発言を一部に含めることによる皮肉を含めてください。煽りも忘れないでください。\n「{text}」"
+    response = openai.ChatCompletion.create(
+        model="gpt-4",
+        messages=[
+            {"role": "user", "content": prompt_user}
+        ]
+    )
+
+    return response.choices[0].message.content.strip()
+
+
 @app.event("message")
 def handle_message(body, say):
     print(body)
@@ -83,9 +96,27 @@ def handle_message(body, say):
 
         app.client.chat_postMessage(
             channel=channel_id,
-            text=f"<@{user_id}> よ、発言が過激だ。このように言い直すのだ。:\n```{polite_text}```",
+            text=f"<@{user_id}> さん、発言が不適切です。以下のように言い直してください。:\n```{polite_text}```",
             thread_ts=thread_ts
         )
+
+
+@app.event("app_mention")
+def handle_app_mention(body, say):
+    print(body)
+    channel_id = body['event']['channel']
+    user_id = body['event']['user']
+    text = body['event']['text']
+    thread_ts = body['event']['ts']
+
+    kyotoben_text = kyotoben_transformer(text)
+    print(kyotoben_text)
+    kyotoben_text = kyotoben_text.replace("<@U0559M7LES1> ", "")
+    app.client.chat_postMessage(
+        channel=channel_id,
+        text=f"<@{user_id}> 京都弁transformerの結果です。:\n```{kyotoben_text}```",
+        thread_ts=thread_ts
+    )
 
 
 def handler(event, context):
