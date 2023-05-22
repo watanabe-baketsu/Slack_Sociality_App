@@ -61,8 +61,8 @@ def polite_japanese(text):
 
 
 def kyotoben_transformer(text):
-    prompt_user = f"以下の発言を皮肉っぽく相手の煽るような京都弁に変換してください。" \
-                  f"ただし、あえて褒めるような発言を一部に含めることによる皮肉を含めてください。煽りも忘れないでください。\n「{text}」"
+    prompt_user = f"以下の発言を皮肉っぽい、相手を煽るような京都弁に変換してください。" \
+                  f"ただし、元の発言の反対の意味の形容を用いた皮肉を含めてください。煽りも忘れないでください。\n「{text}」"
     response = openai.ChatCompletion.create(
         model="gpt-4",
         messages=[
