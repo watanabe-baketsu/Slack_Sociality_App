@@ -8,6 +8,26 @@ AWS SAM + Python + OpenAI API
 ## デプロイ構成
 API Gateway + Lambda + Secrets Manager
 
+## 事前準備
+- AWS SAM CLIのインストール
+- AWS SecretsManagerへの資格情報登録 
+  - リージョン：`ap-northeast-1`
+  - SecretName：`social-skill-develop`
+    - openai-api-key
+    - slack-app-token
+    - slack-bot-token
+    - slack-signing-secret
+
+### Secrets Managerサンプル
+```json
+{
+  'slack-app-token': 'xoxb-xxxxxxxxxxxx-xxxxxxxxxxxxxxxxxxxxxxxx',
+  'slack-bot-token': 'xoxb-xxxxxxxxxxxx-xxxxxxxxxxxxxxxxxxxxxxxx',
+  'slack-signing-secret': 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx',
+  'openai-api-key': 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx',
+}
+```
+
 ## Build & Deploy
 ```bash
 sam build

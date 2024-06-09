@@ -2,7 +2,7 @@ import json
 from http import HTTPStatus
 
 import boto3
-import openai
+from openai import OpenAI
 from slack_bolt import App
 from slack_bolt.adapter.aws_lambda import SlackRequestHandler
 
@@ -26,7 +26,9 @@ def get_secret():
 
 
 secrets = json.loads(get_secret())
-openai.api_key = secrets['openai-api-key']
+openai_client = OpenAI(
+    api_key=secrets['openai-api-key']
+)
 
 # Slack App設定
 SLACK_APP_TOKEN = secrets['slack-app-token']
@@ -49,8 +51,8 @@ def polite_japanese(text):
                     "If you output '0', a modified sentence is not necessary." \
                     "Output the 'Modified sentence' part in Japanese."
     prompt_user = text
-    response = openai.ChatCompletion.create(
-        model="gpt-4",
+    response = openai_client.chat.completions.create(
+        model="gpt-4o",
         messages=[
             {"role": "system", "content": prompt_system},
             {"role": "user", "content": prompt_user}
@@ -63,8 +65,8 @@ def polite_japanese(text):
 def kyotoben_transformer(text):
     prompt_user = f"以下の発言を皮肉っぽい、相手を煽るような京都弁に変換してください。" \
                   f"ただし、元の発言の反対の意味の形容を用いた皮肉を含めてください。煽りも忘れないでください。\n「{text}」"
-    response = openai.ChatCompletion.create(
-        model="gpt-4",
+    response = openai_client.chat.completions.create(
+        model="gpt-4o",
         messages=[
             {"role": "user", "content": prompt_user}
         ]
